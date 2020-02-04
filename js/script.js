@@ -50,13 +50,80 @@ function DesignAndTheme(text, index) {
     //select the index you want to display as selected
     color.selectedIndex = index;
 }
+var totalCost = 0;
+const activities = document.querySelector(".activities");
+const input = activities.querySelectorAll("input");
+const p = document.createElement("p");
 
-// for (let i = 0; i < color.length; i++) {
-//     if (color[i].textContent.includes("JS Puns")) {
-//         console.log("Js Puns");
-//     } else {
-//         console.log("Hearts JS");
-//     }
-// }
+activities.appendChild(p);
 
-function designSelection(theme) {}
+for (let i = 0; i < input.length; i++) {
+    console.log(input[i].dataset.cost);
+}
+
+activities.addEventListener("change", e => {
+    let cost = e.target.dataset.cost;
+    cost = parseInt(cost);
+
+    if (e.target.checked) {
+        totalCost += cost;
+    } else if (!e.target.checked) {
+        totalCost -= cost;
+    }
+    p.textContent = "Total: $" + totalCost;
+
+    const activityTime = e.target.dataset.dayAndTime;
+
+    for (let i = 0; i < input.length; i++) {
+        const checkbox = input[i].dataset.dayAndTime;
+        if (checkbox == activityTime && e.target != input[i]) {
+            if (e.target.checked) {
+                console.log(
+                    "Checked ",
+                    e.target.dataset.dayAndTime,
+                    input[i].dataset.dayAndTime
+                );
+                input[i].disabled = true;
+            } else {
+                console.log(
+                    "Uncheced",
+                    e.target.dataset.dayAndTime,
+                    input[i].dataset.dayAndTime
+                );
+                input[i].disabled = false;
+            }
+        }
+    }
+});
+
+const payment = document.getElementById("payment");
+payment[0].style.display = "none";
+
+const creditCard = document.getElementById("credit-card");
+const paypal = document.getElementById("paypal");
+const bitcoin = document.getElementById("bitcoin");
+
+payment.addEventListener("change", e => {
+    const value = e.target.value;
+    console.log(value);
+
+    switch (value) {
+        case "credit card":
+            creditCard.style.display = "";
+            paypal.style.display = "none";
+            bitcoin.style.display = "none";
+            break;
+        case "paypal":
+            creditCard.style.display = "none";
+            bitcoin.style.display = "none";
+            paypal.style.display = "";
+            break;
+        case "bitcoin":
+            creditCard.style.display = "none";
+            paypal.style.display = "none";
+            bitcoin.style.display = "";
+            break;
+        default:
+            break;
+    }
+});
