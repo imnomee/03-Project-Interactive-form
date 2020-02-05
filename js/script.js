@@ -49,7 +49,7 @@ for (let i = 0; i < color.length; i++) {
 }
 
 //Change listener for design and Color
-//TODO try some other approach for not adding hard coded values
+//TODO try some other approach for not adding hard coded values like array
 design.addEventListener("change", e => {
     switch (e.target.value) {
         case "js puns":
@@ -137,12 +137,15 @@ payment.addEventListener("change", e => {
 });
 
 form.addEventListener("submit", e => e.preventDefault());
+
+//REGEX TEMPLATES
 const nameT = /^[\w\s]+$/i;
 const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
 const zipT = /^\d{5}$/;
 const cvvT = /^\d{3}$/;
 
+//VALIDATIONS
 name.addEventListener("input", fieldValidation(nameT));
 email.addEventListener("input", fieldValidation(emailT));
 activities.addEventListener("input", e => {
@@ -165,6 +168,7 @@ zip.addEventListener("input", fieldValidation(zipT));
 
 cvv.addEventListener("input", fieldValidation(cvvT));
 
+//HELPER FUNCTIONS TO VALIDATE THE FIELDS
 function isActivityValid() {
     let valid = false;
     for (let i = 0; i < input.length; i++) {
@@ -178,6 +182,7 @@ function isActivityValid() {
 function isFieldValid(regex, text) {
     return regex.test(text);
 }
+
 //Universal Field Validator function
 /*
 This function takes regext Template
