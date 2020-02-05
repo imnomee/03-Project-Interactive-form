@@ -82,7 +82,7 @@ function DesignAndTheme(text, index) {
 }
 
 activities.appendChild(h3);
-
+let totalCost = 0;
 activities.addEventListener("change", e => {
     let cost = e.target.dataset.cost;
     cost = parseInt(cost);
