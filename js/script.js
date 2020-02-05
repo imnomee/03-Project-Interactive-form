@@ -141,6 +141,8 @@ payment.addEventListener("change", e => {
 const form = document.querySelector("form");
 const email = document.getElementById("mail");
 const ccNumber = document.getElementById("cc-num");
+const zip = document.getElementById("zip");
+const cvv = document.getElementById("cvv");
 
 form.addEventListener("submit", e => e.preventDefault());
 
@@ -179,9 +181,32 @@ activities.addEventListener("input", e => {
 });
 
 ccNumber.addEventListener("input", e => {
-    const valid = isCardValid(ccNumber);
-    if (!valid) {
-        ccNumber.style.borderColor = "red";
+    const text = e.target.value;
+    const valid = isCardValid(text);
+    if (text != "" && valid) {
+        ccNumber.style.border = "#5e97b0";
+    } else {
+        ccNumber.style.border = "thick solid red";
+    }
+});
+
+zip.addEventListener("input", e => {
+    const text = e.target.value;
+    const valid = isZipValid(text);
+    if (text != "" && valid) {
+        zip.style.border = "#5e97b0";
+    } else {
+        zip.style.border = "thick solid red";
+    }
+});
+
+cvv.addEventListener("input", e => {
+    const text = e.target.value;
+    const valid = isCvvValid(text);
+    if (text != "" && valid) {
+        cvv.style.border = "#5e97b0";
+    } else {
+        cvv.style.border = "thick solid red";
     }
 });
 
@@ -206,6 +231,14 @@ function isActivityValid() {
 }
 
 function isCardValid(number) {
-    const regex = /^[0-9]{13,16}$/;
-    return regex.test(number);
+    return /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/.test(number);
+    // return /^\d{4}\s?\d{1,4}$/.test(number);
+}
+
+function isZipValid(number) {
+    return /^\d{5}$/.test(number);
+}
+
+function isCvvValid(number) {
+    return /^\d{3}$/.test(number);
 }
