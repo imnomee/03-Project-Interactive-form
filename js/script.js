@@ -5,6 +5,7 @@ const email = document.getElementById("mail"); //Email input
 const title = document.getElementById("title"); //Jobs title
 const design = document.getElementById("design"); //Shirt Design
 const color = document.getElementById("color"); // Shirt Colors
+const colorsDiv = document.getElementById("colors-js-puns"); //Color Div includes Field label and options
 const activities = document.querySelector(".activities"); //Activities Div
 const input = activities.querySelectorAll("input"); //All input checkboxes
 const label = activities.querySelectorAll("label"); // All labels for checkboxes
@@ -35,14 +36,26 @@ title.addEventListener("change", e => {
 // Previous option of Select Theme is disabled here.
 design.firstElementChild.style.display = "none";
 
+/* I am hiding the colodDiv if the user haven't selected the design. 
+below the code is not displayed if the colorDiv is hidden so I have commented it out.
+
+// ------- START OF THE NEW OPTION CODE -------//
 // New Shirt Colors Option
 const colorOption = document.createElement("option");
 colorOption.text = "Please Select T-Shirt Theme.";
 
 //add new option at index 0 of select element
 color.add(colorOption, 0);
+
 //select it by default to it stays on top and selected
 colorOption.defaultSelected = true;
+
+// -------- END OF THE NEW OPTION CODE -------//
+
+*/
+
+//colodDiv is not displayed here
+colorsDiv.style.display = "none";
 //disable all colors until theme is selcted
 for (let i = 0; i < color.length; i++) {
     color[i].style.display = "none";
@@ -74,9 +87,10 @@ function DesignAndTheme(text, index) {
         //if the text content of option includes the required text, display it
         if (color[i].textContent.includes(text)) {
             color[i].style.display = "";
+            //display the colorDiv Now
+            colorsDiv.style.display = "";
         }
     }
-
     //select the index you want to display as selected
     color.selectedIndex = index;
 }
@@ -136,7 +150,9 @@ payment.addEventListener("change", e => {
     }
 });
 
-form.addEventListener("submit", e => e.preventDefault());
+form.addEventListener("submit", e => {
+    e.preventDefault();
+});
 
 //REGEX TEMPLATES
 const nameT = /^[\w\s]+$/i;
@@ -163,9 +179,7 @@ activities.addEventListener("input", e => {
     }
 });
 ccNumber.addEventListener("input", fieldValidation(cardT));
-
 zip.addEventListener("input", fieldValidation(zipT));
-
 cvv.addEventListener("input", fieldValidation(cvvT));
 
 //HELPER FUNCTIONS TO VALIDATE THE FIELDS
