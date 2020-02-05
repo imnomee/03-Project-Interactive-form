@@ -137,10 +137,14 @@ payment.addEventListener("change", e => {
 });
 
 form.addEventListener("submit", e => e.preventDefault());
+const nameT = /^[\w\s]+$/i;
+const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
+const zipT = /^\d{5}$/;
+const cvvT = /^\d{3}$/;
 
-name.addEventListener("input", fieldValidation(isNameValid));
-
-email.addEventListener("input", fieldValidation(isEmailValid));
+name.addEventListener("input", fieldValidation(nameT));
+email.addEventListener("input", fieldValidation(emailT));
 activities.addEventListener("input", e => {
     const valid = isActivityValid();
     if (valid == false) {
@@ -155,28 +159,11 @@ activities.addEventListener("input", e => {
         }
     }
 });
-ccNumber.addEventListener("input", fieldValidation(isCardValid));
+ccNumber.addEventListener("input", fieldValidation(cardT));
 
-zip.addEventListener("input", fieldValidation(isZipValid));
+zip.addEventListener("input", fieldValidation(zipT));
 
-cvv.addEventListener("input", fieldValidation(isCvvValid));
-
-/*****************************
- * FIELD VALIDATOR FUNCTIONS
- ****************************/
-const nameT = /^[\w\s]+$/i;
-const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
-const zipT = /^\d{5}$/;
-const cvvT = /^\d{3}$/;
-
-function isNameValid(text) {
-    text = text.trim();
-    return nameT.test(text);
-}
-function isEmailValid(text) {
-    return emailT.test(text);
-}
+cvv.addEventListener("input", fieldValidation(cvvT));
 
 function isActivityValid() {
     let valid = false;
@@ -188,25 +175,21 @@ function isActivityValid() {
     return valid;
 }
 
-function isCardValid(text) {
-    return cardT.test(text);
+function isFieldValid(regex, text) {
+    return regex.test(text);
 }
-
-function isZipValid(text) {
-    return zipT.test(text);
-}
-
-function isCvvValid(text) {
-    return cvvT.test(text);
-}
-
 //Universal Field Validator function
-function fieldValidation(validator) {
+/*
+This function takes regext Template
+finds text content from e.target and then uses
+isFieldValid (a validation funtion) to validate true or false status of field
+*/
+function fieldValidation(template) {
     return e => {
         const target = e.target;
         const text = target.value;
 
-        const valid = validator(text);
+        const valid = isFieldValid(template, text);
         if (text != "" && valid) {
             target.style.border = "#5e97b0";
         } else {
