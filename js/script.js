@@ -2,8 +2,18 @@ const name = document.getElementById("name");
 //Set
 name.focus();
 
+const title = document.getElementById("title");
 const other = document.getElementById("other-title");
 other.style.display = "none";
+title.addEventListener("change", e => {
+    if (e.target.value != "other") {
+        other.style.display = "none";
+    } else {
+        other.style.display = "";
+    }
+});
+
+// other.style.display = "none";
 
 const design = document.getElementById("design");
 design.firstElementChild.style.display = "none";
@@ -53,6 +63,7 @@ function DesignAndTheme(text, index) {
 var totalCost = 0;
 const activities = document.querySelector(".activities");
 const input = activities.querySelectorAll("input");
+const label = activities.querySelectorAll("label");
 const p = document.createElement("p");
 
 activities.appendChild(p);
@@ -102,7 +113,7 @@ payment[0].style.display = "none";
 const creditCard = document.getElementById("credit-card");
 const paypal = document.getElementById("paypal");
 const bitcoin = document.getElementById("bitcoin");
-
+payment.selectedIndex = 1;
 payment.addEventListener("change", e => {
     const value = e.target.value;
     console.log(value);
@@ -127,3 +138,74 @@ payment.addEventListener("change", e => {
             break;
     }
 });
+const form = document.querySelector("form");
+const email = document.getElementById("mail");
+const ccNumber = document.getElementById("cc-num");
+
+form.addEventListener("submit", e => e.preventDefault());
+
+name.addEventListener("input", e => {
+    const text = e.target.value;
+    const valid = isNameValid(text);
+    if (text != "" && valid) {
+        name.style.border = "#5e97b0";
+    } else {
+        name.style.border = "thick solid red";
+    }
+});
+email.addEventListener("input", e => {
+    const text = e.target.value;
+    const valid = isEmailValid(text);
+    if (valid) {
+        email.style.border = "#5e97b0";
+    } else {
+        email.style.border = "thick solid red";
+    }
+});
+
+activities.addEventListener("input", e => {
+    const valid = isActivityValid();
+    if (valid == false) {
+        for (let i = 0; i < label.length; i++) {
+            label[i].style.color = "red";
+            label[i].style.fontSize = "1.05em";
+        }
+    } else {
+        for (let i = 0; i < label.length; i++) {
+            label[i].style.color = "";
+            label[i].style.fontSize = "1em";
+        }
+    }
+});
+
+ccNumber.addEventListener("input", e => {
+    const valid = isCardValid(ccNumber);
+    if (!valid) {
+        ccNumber.style.borderColor = "red";
+    }
+});
+
+function isNameValid(text) {
+    text = text.trim();
+    return /^[\w\s]+$/i.test(text);
+}
+function isEmailValid(email) {
+    return /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        email
+    );
+}
+
+function isActivityValid() {
+    let valid = false;
+    for (let i = 0; i < input.length; i++) {
+        if (input[i].checked) {
+            valid = true;
+        }
+    }
+    return valid;
+}
+
+function isCardValid(number) {
+    const regex = /^[0-9]{13,16}$/;
+    return regex.test(number);
+}
