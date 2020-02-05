@@ -1,10 +1,29 @@
-const name = document.getElementById("name");
-//Set
+//MAIN FORM FIELDS
+const form = document.querySelector("form"); //Main form
+const name = document.getElementById("name"); //Name input
+const email = document.getElementById("mail"); //Email input
+const title = document.getElementById("title"); //Jobs title
+const design = document.getElementById("design"); //Shirt Design
+const color = document.getElementById("color"); // Shirt Colors
+const activities = document.querySelector(".activities"); //Activities Div
+const input = activities.querySelectorAll("input"); //All input checkboxes
+const label = activities.querySelectorAll("label"); // All labels for checkboxes
+
+const payment = document.getElementById("payment"); //Payment Type
+const creditCard = document.getElementById("credit-card"); //Credit Card option
+const paypal = document.getElementById("paypal"); //Paypal option
+const bitcoin = document.getElementById("bitcoin"); //Bitcoin option
+const ccNumber = document.getElementById("cc-num"); //Card number input
+const zip = document.getElementById("zip"); //zip input
+const cvv = document.getElementById("cvv"); //cvv input
+
 name.focus();
 
-const title = document.getElementById("title");
-const other = document.getElementById("other-title");
+// EXTRA FIELDS ADDED TO FROM
+const h3 = document.createElement("h3"); //Heading for total cost
+const other = document.getElementById("other-title"); //Other option
 other.style.display = "none";
+
 title.addEventListener("change", e => {
     if (e.target.value != "other") {
         other.style.display = "none";
@@ -13,13 +32,10 @@ title.addEventListener("change", e => {
     }
 });
 
-// other.style.display = "none";
-
-const design = document.getElementById("design");
+// Previous option of Select Theme is disabled here.
 design.firstElementChild.style.display = "none";
 
-const color = document.getElementById("color");
-
+// New Shirt Colors Option
 const colorOption = document.createElement("option");
 colorOption.text = "Please Select T-Shirt Theme.";
 
@@ -27,11 +43,13 @@ colorOption.text = "Please Select T-Shirt Theme.";
 color.add(colorOption, 0);
 //select it by default to it stays on top and selected
 colorOption.defaultSelected = true;
-
+//disable all colors until theme is selcted
 for (let i = 0; i < color.length; i++) {
     color[i].style.display = "none";
 }
 
+//Change listener for design and Color
+//TODO try some other approach for not adding hard coded values
 design.addEventListener("change", e => {
     switch (e.target.value) {
         case "js puns":
@@ -46,6 +64,8 @@ design.addEventListener("change", e => {
     }
 });
 
+//Universal Function for design and colour change
+//TODO add arrays approach
 function DesignAndTheme(text, index) {
     for (let i = 0; i < color.length; i++) {
         //set all the themes to none
@@ -60,17 +80,8 @@ function DesignAndTheme(text, index) {
     //select the index you want to display as selected
     color.selectedIndex = index;
 }
-var totalCost = 0;
-const activities = document.querySelector(".activities");
-const input = activities.querySelectorAll("input");
-const label = activities.querySelectorAll("label");
-const p = document.createElement("p");
 
-activities.appendChild(p);
-
-for (let i = 0; i < input.length; i++) {
-    console.log(input[i].dataset.cost);
-}
+activities.appendChild(h3);
 
 activities.addEventListener("change", e => {
     let cost = e.target.dataset.cost;
@@ -81,7 +92,7 @@ activities.addEventListener("change", e => {
     } else if (!e.target.checked) {
         totalCost -= cost;
     }
-    p.textContent = "Total: $" + totalCost;
+    h3.textContent = "Total: $" + totalCost;
 
     const activityTime = e.target.dataset.dayAndTime;
 
@@ -89,30 +100,16 @@ activities.addEventListener("change", e => {
         const checkbox = input[i].dataset.dayAndTime;
         if (checkbox == activityTime && e.target != input[i]) {
             if (e.target.checked) {
-                console.log(
-                    "Checked ",
-                    e.target.dataset.dayAndTime,
-                    input[i].dataset.dayAndTime
-                );
                 input[i].disabled = true;
             } else {
-                console.log(
-                    "Uncheced",
-                    e.target.dataset.dayAndTime,
-                    input[i].dataset.dayAndTime
-                );
                 input[i].disabled = false;
             }
         }
     }
 });
 
-const payment = document.getElementById("payment");
 payment[0].style.display = "none";
 
-const creditCard = document.getElementById("credit-card");
-const paypal = document.getElementById("paypal");
-const bitcoin = document.getElementById("bitcoin");
 payment.selectedIndex = 1;
 payment.addEventListener("change", e => {
     const value = e.target.value;
@@ -138,33 +135,12 @@ payment.addEventListener("change", e => {
             break;
     }
 });
-const form = document.querySelector("form");
-const email = document.getElementById("mail");
-const ccNumber = document.getElementById("cc-num");
-const zip = document.getElementById("zip");
-const cvv = document.getElementById("cvv");
 
 form.addEventListener("submit", e => e.preventDefault());
 
-name.addEventListener("input", e => {
-    const text = e.target.value;
-    const valid = isNameValid(text);
-    if (text != "" && valid) {
-        name.style.border = "#5e97b0";
-    } else {
-        name.style.border = "thick solid red";
-    }
-});
-email.addEventListener("input", e => {
-    const text = e.target.value;
-    const valid = isEmailValid(text);
-    if (valid) {
-        email.style.border = "#5e97b0";
-    } else {
-        email.style.border = "thick solid red";
-    }
-});
+name.addEventListener("input", fieldValidation(isNameValid));
 
+email.addEventListener("input", fieldValidation(isEmailValid));
 activities.addEventListener("input", e => {
     const valid = isActivityValid();
     if (valid == false) {
@@ -179,45 +155,27 @@ activities.addEventListener("input", e => {
         }
     }
 });
+ccNumber.addEventListener("input", fieldValidation(isCardValid));
 
-ccNumber.addEventListener("input", e => {
-    const text = e.target.value;
-    const valid = isCardValid(text);
-    if (text != "" && valid) {
-        ccNumber.style.border = "#5e97b0";
-    } else {
-        ccNumber.style.border = "thick solid red";
-    }
-});
+zip.addEventListener("input", fieldValidation(isZipValid));
 
-zip.addEventListener("input", e => {
-    const text = e.target.value;
-    const valid = isZipValid(text);
-    if (text != "" && valid) {
-        zip.style.border = "#5e97b0";
-    } else {
-        zip.style.border = "thick solid red";
-    }
-});
+cvv.addEventListener("input", fieldValidation(isCvvValid));
 
-cvv.addEventListener("input", e => {
-    const text = e.target.value;
-    const valid = isCvvValid(text);
-    if (text != "" && valid) {
-        cvv.style.border = "#5e97b0";
-    } else {
-        cvv.style.border = "thick solid red";
-    }
-});
+/*****************************
+ * FIELD VALIDATOR FUNCTIONS
+ ****************************/
+const nameT = /^[\w\s]+$/i;
+const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
+const zipT = /^\d{5}$/;
+const cvvT = /^\d{3}$/;
 
 function isNameValid(text) {
     text = text.trim();
-    return /^[\w\s]+$/i.test(text);
+    return nameT.test(text);
 }
-function isEmailValid(email) {
-    return /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        email
-    );
+function isEmailValid(text) {
+    return emailT.test(text);
 }
 
 function isActivityValid() {
@@ -230,15 +188,29 @@ function isActivityValid() {
     return valid;
 }
 
-function isCardValid(number) {
-    return /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/.test(number);
-    // return /^\d{4}\s?\d{1,4}$/.test(number);
+function isCardValid(text) {
+    return cardT.test(text);
 }
 
-function isZipValid(number) {
-    return /^\d{5}$/.test(number);
+function isZipValid(text) {
+    return zipT.test(text);
 }
 
-function isCvvValid(number) {
-    return /^\d{3}$/.test(number);
+function isCvvValid(text) {
+    return cvvT.test(text);
+}
+
+//Universal Field Validator function
+function fieldValidation(validator) {
+    return e => {
+        const target = e.target;
+        const text = target.value;
+
+        const valid = validator(text);
+        if (text != "" && valid) {
+            target.style.border = "#5e97b0";
+        } else {
+            target.style.border = "thick solid red";
+        }
+    };
 }
