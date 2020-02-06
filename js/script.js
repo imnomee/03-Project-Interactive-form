@@ -216,33 +216,26 @@ function fieldValidation(template) {
 }
 
 ///FORM VALIDATION WORKING
-// function formValidation() {
-//     // try to provide all the arguments and use with for loop
-//     const text = name.textContent;
 
-//     const valid = isFieldValid(nameT, text);
-//     if (text != "" && valid) {
-//         name.style.border = "#5e97b0";
-//     } else {
-//         name.style.border = "thick solid red";
-//     }
-// }
 form.addEventListener("submit", e => {
     e.preventDefault();
     formValidation(name, email, ccNumber, zip, cvv);
 });
 
-function formValidation(name, email, ccNumber, zip, ccv) {
+function formValidation() {
+    console.log("running form validation");
     // // try to provide all the arguments and use with for loop
-    // for (let i = 0; i < arguments.length; i++) {
-    // console.log(arguments[i]);
-    const text = name.textContent;
-    const valid = isFieldValid(nameT, text);
-    if (text != "" && valid) {
-        name.style.border = "#5e97b0";
-    } else {
-        name.style.border = "thick solid blue";
+    for (let i = 0; i < arguments.length; i++) {
+        console.log(arguments[i]);
+        const text = arguments[i].value;
+        const valid = isFieldValid(nameT, text);
+        if (text != "" && valid) {
+            console.log("valid");
+            arguments[i].style.border = "#5e97b0";
+        } else if (text == "" && !valid) {
+            console.log("invalid");
+            arguments[i].style.border = "thick solid blue";
+        }
     }
-    // }
 }
 // formValidation(name, email, ccNumber, zip, cvv);
