@@ -226,7 +226,6 @@ function fieldValidation(template) {
 
         const valid = isFieldValid(template, text);
         if (text != "" && valid) {
-            if (text != "" && valid) {
             target.style.border = "#5e97b0";
         } else {
             target.style.border = "3px solid red";
