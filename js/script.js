@@ -1,8 +1,27 @@
-//MAIN FORM FIELDS
+/*
+** Set focus on the first text field
+** ”Job Role” section
+** ”T-Shirt Info” section
+** ”Register for Activities” section
+** "Payment Info" section
+Form validation
+Form validation messages
+
+** T-shirt section
+Conditional Error Message
+** Real-time Error Messages
+
+*/
+
+/********************************
+ * ELEMENTS
+ *******************************/
+
 const form = document.querySelector("form"); //Main form
 const name = document.getElementById("name"); //Name input
 const email = document.getElementById("mail"); //Email input
 const title = document.getElementById("title"); //Jobs title
+const other = document.getElementById("other-title"); //Other option
 const design = document.getElementById("design"); //Shirt Design
 const color = document.getElementById("color"); // Shirt Colors
 const colorsDiv = document.getElementById("colors-js-puns"); //Color Div includes Field label and options
@@ -20,20 +39,38 @@ const ccNumber = document.getElementById("cc-num"); //Card number input
 const zip = document.getElementById("zip"); //zip input
 const cvv = document.getElementById("cvv"); //cvv input
 
-name.focus();
-
-// EXTRA FIELDS ADDED TO FROM
+/***********************
+ * EXTRA ADDED ELEMENTS
+ ***********************/
 const h3 = document.createElement("h3"); //Heading for total cost
-const other = document.getElementById("other-title"); //Other option
-other.style.display = "none";
 
-title.addEventListener("change", e => {
-    if (e.target.value != "other") {
-        other.style.display = "none";
-    } else {
-        other.style.display = "";
+//REGEX TEMPLATES
+const valArr = [
+    {
+        tag: name,
+        regex: /^[\w\s]+$/i
+    },
+    {
+        tag: email,
+        // regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    },
+    {
+        tag: ccNumber,
+        regex: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/
+    },
+    {
+        tag: zip,
+        regex: /^\d{5}$/
+    },
+    {
+        tag: cvv,
+        regex: /^\d{3}$/
     }
-});
+];
+
+name.focus();
+other.style.display = "none";
 
 // Previous option of Select Theme is disabled here.
 design.firstElementChild.style.display = "none";
@@ -63,6 +100,27 @@ for (let i = 0; i < color.length; i++) {
     color[i].style.display = "none";
 }
 
+activities.appendChild(h3);
+let totalCost = 0;
+
+payment[0].style.display = "none";
+paypal.style.display = "none";
+bitcoin.style.display = "none";
+
+payment.selectedIndex = 1;
+
+/********************************
+ * EVENT LISTENERS
+ *******************************/
+
+title.addEventListener("change", e => {
+    if (e.target.value != "other") {
+        other.style.display = "none";
+    } else {
+        other.style.display = "";
+    }
+});
+
 //Change listener for design and Color
 //TODO try some other approach for not adding hard coded values like array
 design.addEventListener("change", e => {
@@ -79,26 +137,6 @@ design.addEventListener("change", e => {
     }
 });
 
-//Universal Function for design and colour change
-//TODO add arrays approach
-function DesignAndTheme(text, index) {
-    for (let i = 0; i < color.length; i++) {
-        //set all the themes to none
-        color[i].style.display = "none";
-
-        //if the text content of option includes the required text, display it
-        if (color[i].textContent.includes(text)) {
-            color[i].style.display = "";
-            //display the colorDiv Now
-            colorsDiv.style.display = "";
-        }
-    }
-    //select the index you want to display as selected
-    color.selectedIndex = index;
-}
-
-activities.appendChild(h3);
-let totalCost = 0;
 activities.addEventListener("change", e => {
     let cost = e.target.dataset.cost;
     cost = parseInt(cost);
@@ -124,11 +162,6 @@ activities.addEventListener("change", e => {
     }
 });
 
-payment[0].style.display = "none";
-paypal.style.display = "none";
-bitcoin.style.display = "none";
-
-payment.selectedIndex = 1;
 payment.addEventListener("change", e => {
     const value = e.target.value;
     switch (value) {
@@ -136,56 +169,29 @@ payment.addEventListener("change", e => {
             creditCard.style.display = "";
             paypal.style.display = "none";
             bitcoin.style.display = "none";
+
             break;
         case "paypal":
             creditCard.style.display = "none";
             bitcoin.style.display = "none";
             paypal.style.display = "";
+
             break;
         case "bitcoin":
             creditCard.style.display = "none";
             paypal.style.display = "none";
             bitcoin.style.display = "";
+
             break;
         default:
             break;
     }
 });
 
-//REGEX TEMPLATES
-const valArr = [
-    {
-        tag: name,
-        regex: /^[\w\s]+$/i
-    },
-    {
-        tag: email,
-        regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    },
-    {
-        tag: ccNumber,
-        regex: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/
-    },
-    {
-        tag: zip,
-        regex: /^\d{5}$/
-    },
-    {
-        tag: cvv,
-        regex: /^\d{3}$/
-    }
-];
-
-const nameT = /^[\w\s]+$/i;
-const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
-const zipT = /^\d{5}$/;
-const cvvT = /^\d{3}$/;
-
 //VALIDATIONS
-name.addEventListener("input", fieldValidation(nameT));
+name.addEventListener("input", fieldValidation(valArr[0].regex));
 
-email.addEventListener("input", fieldValidation(emailT));
+email.addEventListener("input", fieldValidation(valArr[1].regex));
 activities.addEventListener("input", e => {
     if (!isActivityValid()) {
         act_legend[0].style.color = "red";
@@ -193,9 +199,38 @@ activities.addEventListener("input", e => {
         act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
     }
 });
-ccNumber.addEventListener("input", fieldValidation(cardT));
-zip.addEventListener("input", fieldValidation(zipT));
-cvv.addEventListener("input", fieldValidation(cvvT));
+
+ccNumber.addEventListener("input", fieldValidation(valArr[2].regex));
+zip.addEventListener("input", fieldValidation(valArr[3].regex));
+cvv.addEventListener("input", fieldValidation(valArr[4].regex));
+
+///FORM VALIDATION WORKING
+form.addEventListener("submit", e => {
+    e.preventDefault();
+    formValidation(valArr);
+});
+
+/********************************
+ * FUNCTIONS
+ *******************************/
+
+//Universal Function for design and colour change
+//TODO add arrays approach
+function DesignAndTheme(text, index) {
+    for (let i = 0; i < color.length; i++) {
+        //set all the themes to none
+        color[i].style.display = "none";
+
+        //if the text content of option includes the required text, display it
+        if (color[i].textContent.includes(text)) {
+            color[i].style.display = "";
+            //display the colorDiv Now
+            colorsDiv.style.display = "";
+        }
+    }
+    //select the index you want to display as selected
+    color.selectedIndex = index;
+}
 
 //HELPER FUNCTIONS TO VALIDATE THE FIELDS
 //TODOuse totalCost to check if its true of false
@@ -233,28 +268,42 @@ function fieldValidation(template) {
     };
 }
 
-///FORM VALIDATION WORKING
 form.addEventListener("submit", e => {
-    e.preventDefault();
+    // FURTHER CHECKS
     formValidation(valArr);
+    e.preventDefault();
 });
 
+// validate credit card only if the credit is selected
 function formValidation(array) {
     if (totalCost == 0) {
         act_legend[0].style.color = "red";
     } else {
         act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
     }
-    for (let i = 0; i < array.length; i++) {
-        const tag = array[i].tag;
-        const regex = array[i].regex;
-        const text = array[i].tag.value;
-
-        const valid = isFieldValid(regex, text);
-        if (text != "" && valid) {
-            tag.style.border = "#5e97b0";
-        } else if (text == "" && !valid) {
-            tag.style.border = "3px solid red";
+    if (payment.selectedIndex == 1) {
+        for (let i = 0; i < array.length; i++) {
+            const tag = array[i].tag;
+            const regex = array[i].regex;
+            const text = array[i].tag.value;
+            const valid = isFieldValid(regex, text);
+            if (text != "" && valid) {
+                tag.style.border = "#5e97b0";
+            } else if (text == "" && !valid) {
+                tag.style.border = "3px solid red";
+            }
+        }
+    } else {
+        for (let i = 0; i < array.length - 3; i++) {
+            const tag = array[i].tag;
+            const regex = array[i].regex;
+            const text = array[i].tag.value;
+            const valid = isFieldValid(regex, text);
+            if (text != "" && valid) {
+                tag.style.border = "#5e97b0";
+            } else if (text == "" && !valid) {
+                tag.style.border = "3px solid red";
+            }
         }
     }
 }
