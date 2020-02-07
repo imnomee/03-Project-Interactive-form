@@ -153,15 +153,24 @@ payment.addEventListener("change", e => {
 });
 
 //REGEX TEMPLATES
-const nameT = /^[\w\s]+$/i;
-const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
-const zipT = /^\d{5}$/;
-const cvvT = /^\d{3}$/;
+// const nameT = /^[\w\s]+$/i;
+// const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+// const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
+// const zipT = /^\d{5}$/;
+// const cvvT = /^\d{3}$/;
+const rTemp = {
+    name: /^[\w\s]+$/i,
+    email: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+    creditCard: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/,
+    zip: /^\d{5}$/,
+    cvv: /^\d{3}$/
+};
 
+const validationNames = Object.keys(rTemp);
 //VALIDATIONS
-name.addEventListener("input", fieldValidation(nameT));
-email.addEventListener("input", fieldValidation(emailT));
+name.addEventListener("input", fieldValidation(rTemp.name));
+
+email.addEventListener("input", fieldValidation(rTemp.email));
 activities.addEventListener("input", e => {
     const valid = isActivityValid();
     if (valid == false) {
@@ -176,9 +185,9 @@ activities.addEventListener("input", e => {
         }
     }
 });
-ccNumber.addEventListener("input", fieldValidation(cardT));
-zip.addEventListener("input", fieldValidation(zipT));
-cvv.addEventListener("input", fieldValidation(cvvT));
+ccNumber.addEventListener("input", fieldValidation(rTemp.creditCard));
+zip.addEventListener("input", fieldValidation(rTemp.zip));
+cvv.addEventListener("input", fieldValidation(rTemp.cvv));
 
 //HELPER FUNCTIONS TO VALIDATE THE FIELDS
 function isActivityValid() {
@@ -228,7 +237,8 @@ function formValidation() {
     for (let i = 0; i < arguments.length; i++) {
         console.log(arguments[i]);
         const text = arguments[i].value;
-        const valid = isFieldValid(nameT, text);
+        const valid = isFieldValid(rTemp.name, text);
+        console.log(rTemp.name);
         if (text != "" && valid) {
             console.log("valid");
             arguments[i].style.border = "#5e97b0";
@@ -238,4 +248,3 @@ function formValidation() {
         }
     }
 }
-// formValidation(name, email, ccNumber, zip, cvv);
