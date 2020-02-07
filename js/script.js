@@ -150,6 +150,9 @@ payment.addEventListener("change", e => {
         default:
             break;
     }
+    ccNumber.style.border = "#5e97b0";
+    zip.style.border = "#5e97b0";
+    cvv.style.border = "#5e97b0";
 });
 
 //REGEX TEMPLATES
@@ -245,16 +248,31 @@ function formValidation(array) {
     } else {
         act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
     }
-    for (let i = 0; i < array.length; i++) {
-        const tag = array[i].tag;
-        const regex = array[i].regex;
-        const text = array[i].tag.value;
+    if (creditCard.style.display != "none") {
+        for (let i = 0; i < array.length; i++) {
+            const tag = array[i].tag;
+            const regex = array[i].regex;
+            const text = array[i].tag.value;
 
-        const valid = isFieldValid(regex, text);
-        if (text != "" && valid) {
-            tag.style.border = "#5e97b0";
-        } else if (text == "" && !valid) {
-            tag.style.border = "3px solid red";
+            const valid = isFieldValid(regex, text);
+            if (text != "" && valid) {
+                tag.style.border = "#5e97b0";
+            } else if (text == "" && !valid) {
+                tag.style.border = "3px solid red";
+            }
+        }
+    } else {
+        for (let i = 0; i < 2; i++) {
+            const tag = array[i].tag;
+            const regex = array[i].regex;
+            const text = array[i].tag.value;
+
+            const valid = isFieldValid(regex, text);
+            if (text != "" && valid) {
+                tag.style.border = "#5e97b0";
+            } else if (text == "" && !valid) {
+                tag.style.border = "3px solid red";
+            }
         }
     }
 }
