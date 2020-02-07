@@ -238,15 +238,20 @@ function fieldValidation(template) {
 
 ///FORM VALIDATION WORKING
 form.addEventListener("submit", e => {
-    e.preventDefault();
-    formValidation(valArr);
+    if (!formValidation(valArr)) {
+        console.log("validator stopped running");
+        e.preventDefault();
+    }
 });
 
 function formValidation(array) {
+    let r = false;
     if (totalCost == 0) {
         act_legend[0].style.color = "red";
+        r = false;
     } else {
         act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
+        r = true;
     }
     if (creditCard.style.display != "none") {
         for (let i = 0; i < array.length; i++) {
@@ -257,8 +262,10 @@ function formValidation(array) {
             const valid = isFieldValid(regex, text);
             if (text != "" && valid) {
                 tag.style.border = "#5e97b0";
+                r = true;
             } else if (text == "" && !valid) {
                 tag.style.border = "3px solid red";
+                r = false;
             }
         }
     } else {
@@ -270,9 +277,12 @@ function formValidation(array) {
             const valid = isFieldValid(regex, text);
             if (text != "" && valid) {
                 tag.style.border = "#5e97b0";
+                r = true;
             } else if (text == "" && !valid) {
                 tag.style.border = "3px solid red";
+                r = false;
             }
         }
     }
+    return r;
 }
