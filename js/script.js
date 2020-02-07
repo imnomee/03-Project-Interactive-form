@@ -7,6 +7,8 @@ const design = document.getElementById("design"); //Shirt Design
 const color = document.getElementById("color"); // Shirt Colors
 const colorsDiv = document.getElementById("colors-js-puns"); //Color Div includes Field label and options
 const activities = document.querySelector(".activities"); //Activities Div
+const act_legend = activities.querySelectorAll("legend");
+
 const input = activities.querySelectorAll("input"); //All input checkboxes
 const label = activities.querySelectorAll("label"); // All labels for checkboxes
 
@@ -56,7 +58,7 @@ colorOption.defaultSelected = true;
 
 //colodDiv is not displayed here
 colorsDiv.style.display = "none";
-//disable all colors until theme is selcted
+//disable all colors until theme is selected
 for (let i = 0; i < color.length; i++) {
     color[i].style.display = "none";
 }
@@ -129,8 +131,6 @@ bitcoin.style.display = "none";
 payment.selectedIndex = 1;
 payment.addEventListener("change", e => {
     const value = e.target.value;
-    console.log(value);
-
     switch (value) {
         case "credit card":
             creditCard.style.display = "";
@@ -153,43 +153,52 @@ payment.addEventListener("change", e => {
 });
 
 //REGEX TEMPLATES
-// const nameT = /^[\w\s]+$/i;
-// const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-// const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
-// const zipT = /^\d{5}$/;
-// const cvvT = /^\d{3}$/;
-const rTemp = {
-    name: /^[\w\s]+$/i,
-    email: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-    creditCard: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/,
-    zip: /^\d{5}$/,
-    cvv: /^\d{3}$/
-};
+const valArr = [
+    {
+        tag: name,
+        regex: /^[\w\s]+$/i
+    },
+    {
+        tag: email,
+        regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    },
+    {
+        tag: ccNumber,
+        regex: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/
+    },
+    {
+        tag: zip,
+        regex: /^\d{5}$/
+    },
+    {
+        tag: cvv,
+        regex: /^\d{3}$/
+    }
+];
 
-const validationNames = Object.keys(rTemp);
+const nameT = /^[\w\s]+$/i;
+const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
+const zipT = /^\d{5}$/;
+const cvvT = /^\d{3}$/;
+
 //VALIDATIONS
-name.addEventListener("input", fieldValidation(rTemp.name));
+name.addEventListener("input", fieldValidation(nameT));
 
-email.addEventListener("input", fieldValidation(rTemp.email));
+email.addEventListener("input", fieldValidation(emailT));
 activities.addEventListener("input", e => {
-    const valid = isActivityValid();
-    if (valid == false) {
-        for (let i = 0; i < label.length; i++) {
-            label[i].style.color = "red";
-            label[i].style.fontSize = "1.05em";
-        }
+    if (!isActivityValid()) {
+        act_legend[0].style.color = "red";
     } else {
-        for (let i = 0; i < label.length; i++) {
-            label[i].style.color = "";
-            label[i].style.fontSize = "1em";
-        }
+        act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
     }
 });
-ccNumber.addEventListener("input", fieldValidation(rTemp.creditCard));
-zip.addEventListener("input", fieldValidation(rTemp.zip));
-cvv.addEventListener("input", fieldValidation(rTemp.cvv));
+ccNumber.addEventListener("input", fieldValidation(cardT));
+zip.addEventListener("input", fieldValidation(zipT));
+cvv.addEventListener("input", fieldValidation(cvvT));
 
 //HELPER FUNCTIONS TO VALIDATE THE FIELDS
+//TODOuse totalCost to check if its true of false
 function isActivityValid() {
     let valid = false;
     for (let i = 0; i < input.length; i++) {
@@ -219,32 +228,33 @@ function fieldValidation(template) {
         if (text != "" && valid) {
             target.style.border = "#5e97b0";
         } else {
-            target.style.border = "thick solid red";
+            target.style.border = "3px solid red";
         }
     };
 }
 
 ///FORM VALIDATION WORKING
-
 form.addEventListener("submit", e => {
     e.preventDefault();
-    formValidation(name, email, ccNumber, zip, cvv);
+    formValidation(valArr);
 });
 
-function formValidation() {
-    console.log("running form validation");
-    // // try to provide all the arguments and use with for loop
-    for (let i = 0; i < arguments.length; i++) {
-        console.log(arguments[i]);
-        const text = arguments[i].value;
-        const valid = isFieldValid(rTemp.name, text);
-        console.log(rTemp.name);
+function formValidation(array) {
+    if (totalCost == 0) {
+        act_legend[0].style.color = "red";
+    } else {
+        act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
+    }
+    for (let i = 0; i < array.length; i++) {
+        const tag = array[i].tag;
+        const regex = array[i].regex;
+        const text = array[i].tag.value;
+
+        const valid = isFieldValid(regex, text);
         if (text != "" && valid) {
-            console.log("valid");
-            arguments[i].style.border = "#5e97b0";
+            tag.style.border = "#5e97b0";
         } else if (text == "" && !valid) {
-            console.log("invalid");
-            arguments[i].style.border = "thick solid blue";
+            tag.style.border = "3px solid red";
         }
     }
 }
