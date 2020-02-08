@@ -1,4 +1,6 @@
-//MAIN FORM FIELDS
+/********************
+ * MAIN FORM FIELDS
+ ********************/
 const form = document.querySelector("form"); //Main form
 const name = document.getElementById("name"); //Name input
 const email = document.getElementById("mail"); //Email input
@@ -7,10 +9,9 @@ const design = document.getElementById("design"); //Shirt Design
 const color = document.getElementById("color"); // Shirt Colors
 const colorsDiv = document.getElementById("colors-js-puns"); //Color Div includes Field label and options
 const activities = document.querySelector(".activities"); //Activities Div
-const act_legend = activities.querySelectorAll("legend");
+const act_legend = activities.querySelector("legend");
 
 const input = activities.querySelectorAll("input"); //All input checkboxes
-const label = activities.querySelectorAll("label"); // All labels for checkboxes
 
 const payment = document.getElementById("payment"); //Payment Type
 const creditCard = document.getElementById("credit-card"); //Credit Card option
@@ -21,10 +22,16 @@ const zip = document.getElementById("zip"); //zip input
 const cvv = document.getElementById("cvv"); //cvv input
 
 name.focus();
-
-// EXTRA FIELDS ADDED TO FROM
+/*********************
+ * EXTRA FIELDS
+ ********************/
 const h3 = document.createElement("h3"); //Heading for total cost
 const other = document.getElementById("other-title"); //Other option
+const zipParent = zip.parentNode; //Zip code parent Node to add p child
+const errorP = document.createElement("p"); //Error paragaraph for zip code
+
+errorP.textContent = ""; //Initially error p is empty
+zipParent.appendChild(errorP);
 other.style.display = "none";
 
 title.addEventListener("change", e => {
@@ -179,29 +186,47 @@ const valArr = [
     }
 ];
 
-const nameT = /^[\w\s]+$/i;
-const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
-const zipT = /^\d{5}$/;
-const cvvT = /^\d{3}$/;
+// const nameT = /^[\w\s]+$/i;
+// const emailT = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+// const cardT = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{1,4}$/;
+// const zipT = /^\d{5}$/;
+// const cvvT = /^\d{3}$/;
 
-//VALIDATIONS
-name.addEventListener("input", fieldValidation(nameT));
+/********************
+ * EVENT LISTENERS
+ ********************/
 
-email.addEventListener("input", fieldValidation(emailT));
+name.addEventListener("input", fieldValidation(valArr[0].regex));
+email.addEventListener("input", fieldValidation(valArr[1].regex));
 activities.addEventListener("input", e => {
     if (!isActivityValid()) {
-        act_legend[0].style.color = "red";
+        act_legend.style.color = "red";
     } else {
-        act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
+        act_legend.style.color = "rgba(6, 49, 68, 0.9)";
     }
 });
-ccNumber.addEventListener("input", fieldValidation(cardT));
-zip.addEventListener("input", fieldValidation(zipT));
-cvv.addEventListener("input", fieldValidation(cvvT));
+ccNumber.addEventListener("input", fieldValidation(valArr[2].regex));
+zip.addEventListener("input", fieldValidation(valArr[3].regex));
+cvv.addEventListener("input", fieldValidation(valArr[4].regex));
 
-//HELPER FUNCTIONS TO VALIDATE THE FIELDS
-//TODOuse totalCost to check if its true of false
+//form Submit listener
+form.addEventListener("submit", e => {
+    // e.preventDefault();
+    /*
+    here we passed valArray in the function that return true or false.
+    if false, it will run preventDefault, if true it will got for submission.
+    */
+    if (!formValidation(valArr)) {
+        console.log("validator stopped running");
+        e.preventDefault();
+    }
+});
+
+/********************
+ * FUNCTIONS
+ ********************/
+
+//Here we have used a different approach of counting the checked checkboxes, if any, it will return true.
 function isActivityValid() {
     let valid = false;
     for (let i = 0; i < input.length; i++) {
@@ -212,16 +237,14 @@ function isActivityValid() {
     return valid;
 }
 
+//This function is validate the single field against a regex
+
 function isFieldValid(regex, text) {
     return regex.test(text);
 }
 
-//Universal Field Validator function
-/*
-This function takes regext Template
-finds text content from e.target and then uses
-isFieldValid (a validation funtion) to validate true or false status of field
-*/
+// this function is used with all the input listeners for real time validation
+
 function fieldValidation(template) {
     return e => {
         const target = e.target;
@@ -236,53 +259,66 @@ function fieldValidation(template) {
     };
 }
 
-///FORM VALIDATION WORKING
-form.addEventListener("submit", e => {
-    if (!formValidation(valArr)) {
-        console.log("validator stopped running");
-        e.preventDefault();
-    }
-});
-
+//This is form Validation function which validates all the fields together
 function formValidation(array) {
-    let r = false;
-    if (totalCost == 0) {
-        act_legend[0].style.color = "red";
-        r = false;
-    } else {
-        act_legend[0].style.color = "rgba(6, 49, 68, 0.9)";
-        r = true;
-    }
+    let length = 0; //actual length of array
+    let result = false;
+
+    //If credit card div is not shown, then drop the length to only first 3 objects in array.
     if (creditCard.style.display != "none") {
-        for (let i = 0; i < array.length; i++) {
-            const tag = array[i].tag;
-            const regex = array[i].regex;
-            const text = array[i].tag.value;
-
-            const valid = isFieldValid(regex, text);
-            if (text != "" && valid) {
-                tag.style.border = "#5e97b0";
-                r = true;
-            } else if (text == "" && !valid) {
-                tag.style.border = "3px solid red";
-                r = false;
-            }
-        }
+        length = array.length;
     } else {
-        for (let i = 0; i < 2; i++) {
-            const tag = array[i].tag;
-            const regex = array[i].regex;
-            const text = array[i].tag.value;
+        length = array.length - 3;
+    }
 
-            const valid = isFieldValid(regex, text);
-            if (text != "" && valid) {
-                tag.style.border = "#5e97b0";
-                r = true;
-            } else if (text == "" && !valid) {
-                tag.style.border = "3px solid red";
-                r = false;
-            }
+    /*
+    for activity validation, here we are checking of the total cost is 0,
+    initially it was set to zero and added increment if the checkbox is select.
+    if it is still 0 then no checkbox is selcted so its Invalid.
+    */
+    if (totalCost == 0) {
+        act_legend.style.color = "red";
+        result = false;
+    } else {
+        act_legend.style.color = "rgba(6, 49, 68, 0.9)";
+        result = true;
+    }
+
+    /* We have set an array of objects and getting values like name regex, label etc from there
+    here we are looping thourgh all the object values and running validity function
+    this will return true or false for only fields that are validated and change their color
+    to red if invalid
+    */
+    for (let i = 0; i < length; i++) {
+        const tag = array[i].tag;
+        const regex = array[i].regex;
+        const text = array[i].tag.value;
+
+        const valid = isFieldValid(regex, text);
+        if (text != "" && valid) {
+            tag.style.border = "#5e97b0";
+            errorP.textContent = "";
+            console.log("true");
+        } else if (text == "" && !valid) {
+            tag.style.border = "3px solid red";
+            console.log("false");
         }
     }
-    return r;
+
+    /*
+    Conditional error message for zip code only.
+    If empty it will show a different message.
+    If more than 5 or less than 3 digits, it will show different message.
+    */
+    if (zip.value.length == 0) {
+        errorP.textContent = "Please enter zip code";
+        errorP.style.color = "red";
+    } else if (
+        (zip.value.length > 0 && zip.value.length < 3) ||
+        zip.value.length > 5
+    ) {
+        errorP.textContent = "Please enter a number that is 5 digits long.";
+    }
+
+    return result; // return result (true or false);
 }
