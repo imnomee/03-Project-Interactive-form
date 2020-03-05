@@ -1,4 +1,4 @@
-# Project-Interactive-form
+# Techdegree 3 - Project-Interactive-form
 
 In this project, we used Javascript to enhace an interactive registration form.
 Using supplied HTML and CSS files. We added our own Javascript to make the form more user-friendly.
